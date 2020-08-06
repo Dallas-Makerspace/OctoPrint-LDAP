@@ -26,6 +26,7 @@ class LDAPConnection(DependentOnSettingsPlugin):
         try:
             self.logger.debug("Initializing LDAP connection to %s" % uri)
             client = ldap.initialize(uri)
+            client.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
             if self.settings.get([REQUEST_TLS_CERT]):
                 self.logger.debug("Requesting TLS certificate")
                 client.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_DEMAND)
@@ -47,7 +48,6 @@ class LDAPConnection(DependentOnSettingsPlugin):
         try:
             client = self.get_client()
             if client is not None:
-                # self.logger.debug("Searching LDAP, base: %s and filter: %s" % (base, ldap_filter))
                 result = client.search_s(base, scope, ldap_filter)
                 client.unbind_s()
                 if result:
@@ -65,21 +65,14 @@ class LDAPConnection(DependentOnSettingsPlugin):
 
     def get_ou_memberships_for(self, dn):
         memberships = []
-
+        name = dn.split(',')[0]
         ou_common_names = self.settings.get([OU])
         if ou_common_names is None:
             return False
 
-        ou_filter = self.settings.get([OU_FILTER])
-        ou_member_filter = self.settings.get([OU_MEMBER_FILTER])
-        for ou_common_name in str(ou_common_names).split(","):
-            result = self.search("(&" +
-                                 "(" + ou_filter % ou_common_name.strip() + ")" +
-                                 "(" + (ou_member_filter % dn) + ")" +
-                                 ")")
-            if result is not None:
-                self.logger.debug("%s is a member of %s" % (dn, result[DISTINGUISHED_NAME]))
-                memberships.append(ou_common_name)
+        user = self.search(name)
+        memberships = [ group.decode().split(',')[0].replace('CN=','') for \
+              group in user['data']['memberOf'] ]
         return memberships
 
 

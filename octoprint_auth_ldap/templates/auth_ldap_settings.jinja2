@@ -139,6 +139,13 @@
                            placeholder="Lab Users, Lab Staff, Students">
                     <span class="help-inline">Common names or other identifying fields for LDAP groups whose members will be allowed to sign in. If this is left blank, all users that can be found on the LDAP server from the search base will be allowed to log in. A comma-delimited list.</span>
                 </div>
+                
+                <label for="plugin_auth_ldap_settings_group_base" class="control-label">{{ _('Group Search Base') }}</label>
+                <div class="controls">
+                    <input id="plugin_auth_ldap_settings_group_base" type="text" class="input-block-level"
+                        data-bind="value: settings.plugins.auth_ldap.group_base" placeholder="" />
+                        <span class="help-inline"><small>LDAP base to use when searching for groups</small></span>
+                </div>
 
                 <label for="plugin_auth_ldap_settings_ou_filter" class="control-label">{{ _('OU Filter') }}</label>
                 <div class="controls">

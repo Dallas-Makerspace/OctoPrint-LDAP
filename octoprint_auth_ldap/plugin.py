@@ -43,6 +43,7 @@ class AuthLDAPPlugin(SettingsPlugin, TemplatePlugin, RestartNeedingPlugin):
             auth_user=None,
             default_admin_group=False,
             default_user_group=True,
+            group_base=None,
 
             # TODO expose in settings GUi
             ldap_group_key_prefix="ldap_",
