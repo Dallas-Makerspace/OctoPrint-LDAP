@@ -44,7 +44,7 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
                 screwed on right and we are NOT escaping their search strings... only escaping unsafe user-entered text that
                 is passed directly to search filters
                 """
-        ldap_user = self.ldap.search(filter_format(search_filter, (userid,)))
+        ldap_user = self.ldap.search(str(filter_format(str(search_filter), (str(userid),))))
         if ldap_user is not None:
             self.logger.debug("User %s found as dn=%s" % (userid, ldap_user[DISTINGUISHED_NAME]))
             groups = self._group_manager.get_ldap_groups_for(ldap_user[DISTINGUISHED_NAME])
