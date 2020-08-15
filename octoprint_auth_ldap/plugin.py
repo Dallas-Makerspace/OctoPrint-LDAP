@@ -31,7 +31,7 @@ class AuthLDAPPlugin(SettingsPlugin, TemplatePlugin, RestartNeedingPlugin):
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/gillg/OctoPrint-LDAP/archive/{target_version}.zip"
+                # pip="https://github.com/gillg/OctoPrint-LDAP/archive/{target_version}.zip"
             )
         )
 
