@@ -24,11 +24,13 @@
                     <span class="help-inline">The URI of the LDAP server. Must include the protocol, and may include the port number. (for example <code>ldaps://example.com:1337</code>)</span>
                 </div>
 
-                <label for="plugin_auth_ldap_settings_request_tls_cert"
-                       class="control-label">{{ _('Request TLS Certificate') }}</label>
                 <div class="controls">
-                    <input id="plugin_auth_ldap_settings_request_tls_cert" type="checkbox" class="input-block-level"
-                           data-bind="checked: settings.plugins.auth_ldap.request_tls_cert">
+                    <label for="plugin_auth_ldap_settings_request_tls_cert"
+                           class="checkbox">
+                        <input id="plugin_auth_ldap_settings_request_tls_cert"
+                               type="checkbox"
+                               data-bind="checked: settings.plugins.auth_ldap.request_tls_cert"> {{ _('Request TLS Certificate') }}
+                    </label>
                 </div>
             </div>
 
@@ -102,26 +104,33 @@
                         being different users.</small>
                 </div>
 
-                <label for="plugin_auth_ldap_settings_local_cache" class="control-label">{{ _('Local cache') }}</label>
                 <div class="controls">
-                    <input id="plugin_auth_ldap_settings_local_cache" type="checkbox" class="input-block-level"
-                           data-bind="checked: settings.plugins.auth_ldap.local_cache">
+                    <label for="plugin_auth_ldap_settings_local_cache" class="checkbox">
+                        <input id="plugin_auth_ldap_settings_local_cache"
+                               type="checkbox"
+                               data-bind="checked: settings.plugins.auth_ldap.local_cache"> {{ _('Local cache') }}
+                    </label>
                     <span class="help-inline">By default, LDAP users are not cached locally to avoid complex permissions checks. However, caching users locally does allow for users (and groups) to receive customized permissions on this local OctoPrint instance, either individually or based on their LDAP group membership.</span>
                 </div>
 
-                <label for="plugin_auth_ldap_settings_default_user"
-                       class="control-label">{{ _('Default User group') }}</label>
                 <div class="controls">
-                    <input id="plugin_auth_ldap_settings_default_user" type="checkbox" class="input-block-level"
-                           data-bind="checked: settings.plugins.auth_ldap.default_user_group">
+                    <label for="plugin_auth_ldap_settings_default_user"
+                           class="checkbox">
+                        <input id="plugin_auth_ldap_settings_default_user"
+                               type="checkbox"
+                               data-bind="checked: settings.plugins.auth_ldap.default_user_group"> {{ _('Default User
+                           group') }}
+                    </label>
                     <span class="help-inline">LDAP users will automatically become members of the generic OctoPrint Users group. (Uncheck to configure narrower permissions based on LDAP group membership.)</span>
                 </div>
 
-                <label for="plugin_auth_ldap_settings_default_admin"
-                       class="control-label">{{ _('Default Admin group') }}</label>
                 <div class="controls">
-                    <input id="plugin_auth_ldap_settings_default_admin" type="checkbox" class="input-block-level"
-                           data-bind="checked: settings.plugins.auth_ldap.default_admin_group">
+                    <label for="plugin_auth_ldap_settings_default_admin"
+                           class="checkbox">
+                        <input id="plugin_auth_ldap_settings_default_admin"
+                               type="checkbox"
+                               data-bind="checked: settings.plugins.auth_ldap.default_admin_group"> {{ _('Default Admin group') }}
+                    </label>
                     <span class="help-inline">LDAP users will automatically be members of the generic OctoPrint Admin group, having full access to all settings. (Uncheck for sanity.)</span>
                 </div>
             </div>
