@@ -49,7 +49,8 @@
                     <input id="plugin_auth_ldap_settings_auth_user" type="text" class="input-block-level"
                            data-bind="value: settings.plugins.auth_ldap.auth_user"
                            placeholder="EXAMPLE\admin or admin@example.com or cn=admin,dc=example,dc=com">
-                    <span class="help-inline">Entered as a a distinguished name (<code>uid=authuser,dc=example,dc=com</code>), principle name (<code>authuser@example.com</code>), or as a UID (<code>example\authuser</code>)</span>
+                    <span
+                        class="help-inline">Entered as a a distinguished name (<code>uid=authuser,dc=example,dc=com</code>), principle name (<code>authuser@example.com</code>), or as a UID (<code>example\authuser</code>)</span>
                 </div>
 
                 <label for="plugin_auth_ldap_settings_auth_password"
@@ -148,12 +149,13 @@
                            placeholder="Lab Users, Lab Staff, Students">
                     <span class="help-inline">Common names or other identifying fields for LDAP groups whose members will be allowed to sign in. If this is left blank, all users that can be found on the LDAP server from the search base will be allowed to log in. A comma-delimited list.</span>
                 </div>
-                
-                <label for="plugin_auth_ldap_settings_group_base" class="control-label">{{ _('Group Search Base') }}</label>
+
+                <label for="plugin_auth_ldap_settings_group_base"
+                       class="control-label">{{ _('Group Search Base') }}</label>
                 <div class="controls">
                     <input id="plugin_auth_ldap_settings_group_base" type="text" class="input-block-level"
-                        data-bind="value: settings.plugins.auth_ldap.group_base" placeholder="" />
-                        <span class="help-inline"><small>LDAP base to use when searching for groups</small></span>
+                           data-bind="value: settings.plugins.auth_ldap.group_base" placeholder=""/>
+                    <span class="help-inline"><small>LDAP base to use when searching for groups</small></span>
                 </div>
 
                 <label for="plugin_auth_ldap_settings_ou_filter" class="control-label">{{ _('OU Filter') }}</label>

@@ -8,6 +8,8 @@ import yaml
 from ldap.filter import filter_format
 from octoprint.access.users import FilebasedUserManager, User, UserAlreadyExists
 from octoprint.util import atomic_write
+from passlib import pwd
+
 from octoprint_auth_ldap.constants import LOCAL_CACHE, SEARCH_FILTER, SEARCH_TERM_TRANSFORM, DISTINGUISHED_NAME, OU
 from octoprint_auth_ldap.group import LDAPGroup
 from octoprint_auth_ldap.group_manager import LDAPGroupManager
@@ -27,7 +29,7 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
     def group_manager(self):
         return self._group_manager
 
-    def find_user(self, userid=None, apikey=None, session=None):
+    def find_user(self, userid=None, apikey=None, session=None, fresh=False):
         self.logger.debug("Search for userid=%s, apiKey=%s, session=%s" % (userid, apikey, session))
         user = FilebasedUserManager.find_user(self, userid=userid, apikey=apikey, session=session)
         user, userid = self._find_user_with_transformation(apikey, session, user, userid)
@@ -80,7 +82,7 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
 
     def add_user(self,
                  username,
-                 password=None,
+                 password=pwd.genword(entropy=52, length=20),
                  active=False,
                  permissions=None,
                  groups=None,
@@ -112,6 +114,7 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
 
             self._users[username] = LDAPUser(
                 username=username,
+                passwordHash=LDAPUserManager.create_password_hash(password, settings=self._settings),
                 active=active,
                 permissions=permissions,
                 groups=groups,
@@ -133,6 +136,9 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
                 client = self.ldap.get_client(user.distinguished_name, password)
                 authenticated = client is not None
                 self.logger.debug("%s was %sauthenticated" % (user.get_name(), "" if authenticated else "not "))
+                if authenticated:
+                    user._passwordHash = LDAPUserManager.create_password_hash(password, settings=self._settings)
+                    self._save(force=True)
                 return authenticated
             else:
                 self.logger.debug("%s is inactive or no longer a member of required groups" % user.get_id())
@@ -159,6 +165,8 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
             with io.open(self._userfile, 'rt', encoding='utf-8') as f:
                 data = yaml.safe_load(f)
                 for name, attributes in data.items():
+                    if name == "_version":
+                        continue
                     permissions = self._to_permissions(*attributes.get("permissions", []))
                     groups = attributes.get("groups", {
                         self._group_manager.user_group  # the user group is mandatory for all logged in users
@@ -181,6 +189,7 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
                         self.logger.debug("Loading %s as %s" % (name, LDAPUser.__name__))
                         self._users[name] = LDAPUser(
                             username=name,
+                            passwordHash=attributes["password"],
                             active=attributes["active"],
                             permissions=permissions,
                             groups=groups,
@@ -225,11 +234,7 @@ class LDAPUserManager(FilebasedUserManager, DependentOnSettingsPlugin, Dependent
                     "type": LDAPUser.USER_TYPE,
                     DISTINGUISHED_NAME: user.distinguished_name,
 
-                    # password field has to exist because of how FilebasedUserManager processes
-                    # data, but an empty password hash cannot match any entered password (as
-                    # whatever the user enters will be hashed... even an empty password.
-                    "password": None,
-
+                    "password": user._passwordHash,
                     "active": user._active,
                     "groups": self._from_groups(*user._groups),
                     "permissions": self._from_permissions(*user._permissions),

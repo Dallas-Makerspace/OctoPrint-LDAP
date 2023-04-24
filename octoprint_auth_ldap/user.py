@@ -9,19 +9,20 @@ class LDAPUser(User):
 
     # noinspection PyShadowingNames
     def __init__(
-            self,
-            username,
-            active=True,
-            permissions=None,
-            groups=None,
-            apikey=None,
-            settings=None,
-            dn=None
+        self,
+        username,
+        passwordHash=None,
+        active=True,
+        permissions=None,
+        groups=None,
+        apikey=None,
+        settings=None,
+        dn=None
     ):
         User.__init__(
             self,
             username=username,
-            passwordHash=None,
+            passwordHash=passwordHash,
             active=active,
             permissions=permissions,
             groups=groups,

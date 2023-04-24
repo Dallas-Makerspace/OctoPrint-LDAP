@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 from octoprint.plugin import TemplatePlugin, RestartNeedingPlugin
 from octoprint.settings import settings
+
 from octoprint_auth_ldap.constants import DEFAULT_ADMIN_GROUP, DEFAULT_USER_GROUP, OU_FILTER, OU_MEMBER_FILTER, OU, \
     REQUEST_TLS_CERT, SEARCH_BASE, URI
 from octoprint_auth_ldap.ldap import LDAPConnection

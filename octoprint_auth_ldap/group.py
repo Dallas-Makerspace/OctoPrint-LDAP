@@ -8,17 +8,17 @@ class LDAPGroup(Group):
     GROUP_TYPE = "LDAP"
 
     def __init__(
-            self,
-            key,
-            name,
-            description="",
-            permissions=None,
-            subgroups=None,
-            default=False,
-            removable=True,
-            changeable=True,
-            toggleable=True,
-            dn=None
+        self,
+        key,
+        name,
+        description="",
+        permissions=None,
+        subgroups=None,
+        default=False,
+        removable=True,
+        changeable=True,
+        toggleable=True,
+        dn=None
     ):
         Group.__init__(
             self,

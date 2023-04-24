@@ -25,4 +25,3 @@ USERID_PATTERN = "userid_pattern"
 
 # frequently used terms
 DISTINGUISHED_NAME = "dn"
-

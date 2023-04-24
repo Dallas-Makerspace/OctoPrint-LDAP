@@ -9,6 +9,7 @@ import yaml
 from octoprint.access.groups import FilebasedGroupManager, Group, GroupAlreadyExists
 from octoprint.access.permissions import Permissions, OctoPrintPermission
 from octoprint.util import atomic_write
+
 from octoprint_auth_ldap.constants import OU, OU_FILTER, DISTINGUISHED_NAME, GROUP_BASE, LDAP_PARENT_GROUP_NAME, \
     LDAP_PARENT_GROUP_DESCRIPTION, LDAP_PARENT_GROUP_KEY, LDAP_GROUP_KEY_PREFIX
 from octoprint_auth_ldap.group import LDAPGroup
@@ -97,46 +98,46 @@ class LDAPGroupManager(FilebasedGroupManager, DependentOnSettingsPlugin, Depende
     def _refresh_ldap_groups(self):
         ou = self.settings.get([OU])
         if ou is not None or ou == "":  # FIXME allowing empty string settings is dumb
-             self.logger.info("Syncing LDAP groups to local groups based on %s settings" % self.plugin.identifier)
+            self.logger.info("Syncing LDAP groups to local groups based on %s settings" % self.plugin.identifier)
 
-             try:
-                 self.add_group(key=self.settings.get([LDAP_PARENT_GROUP_KEY]),
-                                name=self.settings.get([LDAP_PARENT_GROUP_NAME]),
-                                description=self.settings.get([LDAP_PARENT_GROUP_DESCRIPTION]),
-                                permissions=[],
-                                subgroups=[],
-                                overwrite=False
-                                )
-             except GroupAlreadyExists:
-                 assert True
+            try:
+                self.add_group(key=self.settings.get([LDAP_PARENT_GROUP_KEY]),
+                               name=self.settings.get([LDAP_PARENT_GROUP_NAME]),
+                               description=self.settings.get([LDAP_PARENT_GROUP_DESCRIPTION]),
+                               permissions=[],
+                               subgroups=[],
+                               overwrite=False
+                               )
+            except GroupAlreadyExists:
+                assert True
 
-             organizational_units = [group.strip() for group in str(self.settings.get([OU])).split(",")]
-             ldap_groups = [group.get_name() for group in self._groups.values() if isinstance(group, LDAPGroup)]
-             group_base = self.settings.get([GROUP_BASE])
-             ou_filter = self.settings.get([OU_FILTER])
-             self.logger.debug('Group base is %s' % group_base)
-             for ou_common_name in list(set(organizational_units) - set(ldap_groups)):
-                 key = self._to_group_key(ou_common_name)
-                 this_group = self.find_group(key)
-                 if this_group is None:
-                     result = self.ldap.search("(" + ou_filter % ou_common_name.strip() + ")", base=group_base)
-                     self.add_group(key=key,
-                                    name=ou_common_name,
-                                    dn=result[DISTINGUISHED_NAME],
-                                    description="Synced LDAP Group",
-                                    permissions=[],
-                                    subgroups=[],
-                                    toggleable=True,
-                                    removable=False,
-                                    changeable=True,
-                                    save=False
-                                    )
+            organizational_units = [group.strip() for group in str(self.settings.get([OU])).split(",")]
+            ldap_groups = [group.get_name() for group in self._groups.values() if isinstance(group, LDAPGroup)]
+            group_base = self.settings.get([GROUP_BASE])
+            ou_filter = self.settings.get([OU_FILTER])
+            self.logger.debug('Group base is %s' % group_base)
+            for ou_common_name in list(set(organizational_units) - set(ldap_groups)):
+                key = self._to_group_key(ou_common_name)
+                this_group = self.find_group(key)
+                if this_group is None:
+                    result = self.ldap.search("(" + ou_filter % ou_common_name.strip() + ")", base=group_base)
+                    self.add_group(key=key,
+                                   name=ou_common_name,
+                                   dn=result[DISTINGUISHED_NAME],
+                                   description="Synced LDAP Group",
+                                   permissions=[],
+                                   subgroups=[],
+                                   toggleable=True,
+                                   removable=False,
+                                   changeable=True,
+                                   save=False
+                                   )
 
-             self.update_group(
-                 self.settings.get([LDAP_PARENT_GROUP_KEY]),
-                 subgroups=[group for group in self._groups.values() if isinstance(group, LDAPGroup)],
-                 save=True
-             )
+            self.update_group(
+                self.settings.get([LDAP_PARENT_GROUP_KEY]),
+                subgroups=[group for group in self._groups.values() if isinstance(group, LDAPGroup)],
+                save=True
+            )
 
     def get_ldap_groups_for(self, dn):
         if isinstance(dn, LDAPUser):
