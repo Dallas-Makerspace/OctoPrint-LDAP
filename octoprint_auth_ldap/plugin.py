@@ -26,12 +26,12 @@ class AuthLDAPPlugin(SettingsPlugin, TemplatePlugin, RestartNeedingPlugin):
 
                 # version check: github repository
                 type="github_release",
-                user="battis",
+                user="Dallas-Makerspace",
                 repo="OctoPrint-LDAP",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/battis/OctoPrint-LDAP/archive/{target_version}.zip"
+                pip="https://github.com/Dallas-Makerspace/OctoPrint-LDAP/archive/{target_version}.zip"
             )
         )
 
